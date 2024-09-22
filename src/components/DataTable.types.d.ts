@@ -6,7 +6,6 @@ type DataTableProps<T extends TableRowDef> = {
   data: T[];
   columns: ColumnDef<T>[];
   filters?: FilterDef<T>[];
-  onSort?: (key: keyof T) => void;
 };
 
 type CellDef<T> = {

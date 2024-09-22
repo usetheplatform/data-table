@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export function DataTable<T extends TableRowDef>({
   data,
@@ -31,9 +32,17 @@ export function DataTable<T extends TableRowDef>({
     }));
   }
 
-  function onSearch(event: React.ChangeEvent<HTMLInputElement>) {
+  const onSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-  }
+  }, []);
+
+  const debouncedSearch = useDebounce(onSearch, 500);
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch?.cancel();
+    };
+  }, [debouncedSearch]);
 
   const filteredData = data.filter((row) => {
     return (
@@ -75,8 +84,8 @@ export function DataTable<T extends TableRowDef>({
           <input
             type="text"
             placeholder="Search everywhere"
-            value={searchQuery}
-            onChange={onSearch}
+            defaultValue={searchQuery}
+            onChange={debouncedSearch}
             className="border p-2"
           />
         </label>

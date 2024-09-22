@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/DataTable";
+import { useMemo } from "react";
 
 type Order = {
   id: string;
@@ -45,53 +46,59 @@ const orders: Order[] = [
 // 1 Search
 // 2 Filters
 export default function App() {
-  const columns: ColumnDef<Order>[] = [
-    {
-      accessorKey: "order",
-      header: "Order",
-      sortable: true,
-      cell: ({ value, _row }) => value,
-    },
-    {
-      accessorKey: "customer",
-      header: "Customer",
-      sortable: true,
-      cell: ({ value, _row }) => value,
-    },
-    {
-      accessorKey: "total",
-      header: "Total",
-      sortable: true,
-      cell: ({ value, _row }) => (
-        <div className="text-right font-medium">{value}</div>
-      ),
-    },
-    {
-      accessorKey: "paymentStatus",
-      header: "Payment status",
-      cell: ({ value, _row }) => value,
-    },
-    {
-      accessorKey: "fulfillmentStatus",
-      header: "Fulfillment status",
-      cell: ({ value, _row }) => value,
-    },
-  ];
+  const columns: ColumnDef<Order>[] = useMemo(() => {
+    return [
+      {
+        accessorKey: "order",
+        header: "Order",
+        sortable: true,
+        cell: ({ value, _row }) => value,
+      },
+      {
+        accessorKey: "customer",
+        header: "Customer",
+        sortable: true,
+        cell: ({ value, _row }) => value,
+      },
+      {
+        accessorKey: "total",
+        header: "Total",
+        sortable: true,
+        cell: ({ value, _row }) => (
+          <div className="text-right font-medium">{value}</div>
+        ),
+      },
+      {
+        accessorKey: "paymentStatus",
+        header: "Payment status",
+        cell: ({ value, _row }) => value,
+      },
+      {
+        accessorKey: "fulfillmentStatus",
+        header: "Fulfillment status",
+        cell: ({ value, _row }) => value,
+      },
+    ];
+  }, []);
 
-  const filters: FilterDef<Order>[] = [
-    {
-      accessorKey: "paymentStatus",
-      label: "Payment Status",
-      options: Array.from(new Set(orders.map((order) => order.paymentStatus))),
-    },
-    {
-      accessorKey: "fulfillmentStatus",
-      label: "Fulfillment Status",
-      options: Array.from(
-        new Set(orders.map((order) => order.fulfillmentStatus)),
-      ),
-    },
-  ];
+  const filters: FilterDef<Order>[] = useMemo(() => {
+    return [
+      {
+        accessorKey: "paymentStatus",
+        label: "Payment Status",
+        options: Array.from(
+          new Set(orders.map((order) => order.paymentStatus)),
+        ),
+      },
+      {
+        accessorKey: "fulfillmentStatus",
+        label: "Fulfillment Status",
+        options: Array.from(
+          new Set(orders.map((order) => order.fulfillmentStatus)),
+        ),
+      },
+    ];
+  }, []);
 
   return <DataTable data={orders} columns={columns} filters={filters} />;
 }
